@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agriculture Management System - CRUD Operations</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 5px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+
+        .nav-tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+            flex-wrap: wrap;
+        }
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1em;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+        .nav-tab:hover { background: #e0e0e0; }
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: -2px;
+        }
+
+        .content { padding: 30px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .form-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+        .form-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group { display: flex; flex-direction: column; }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+        .btn-secondary:hover { background: #d0d0d0; }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+        .btn-danger:hover { background: #d32f2f; }
+
+        .btn-edit {
+            background: #2196F3;
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+        .btn-edit:hover { background: #1976D2; }
+
+        .table-section { margin-top: 30px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        thead { background: #f5f5f5; }
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #ddd;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        tr:hover { background: #f9f9f9; }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .nav-tabs { overflow-x: auto; }
+            .nav-tab { min-width: 120px; }
+            table { font-size: 0.9em; }
+            th, td { padding: 10px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Agriculture Management System</h1>
+        </div>
+
+    
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('farmers')">Farmers</button>
+            <button class="nav-tab" onclick="switchTab('crops')">Crops</button>
+            <button class="nav-tab" onclick="switchTab('land')">Land</button>
+            <button class="nav-tab" onclick="switchTab('planting-records')">Planting</button>
+            <button class="nav-tab" onclick="switchTab('harvest')">Harvest</button>
+            <button class="nav-tab" onclick="switchTab('markets')">Markets</button>
+            <button class="nav-tab" onclick="switchTab('sales')">Sales</button>
+            <button class="nav-tab" onclick="switchTab('weather')">Weather</button>
+            <button class="nav-tab" onclick="switchTab('equipment')">Equipment</button>
+            <button class="nav-tab" onclick="switchTab('equipment-rental')">Equipment Rental</button>
+            <button class="nav-tab" onclick="switchTab('fertilizers')">Fertilizers</button>
+            <button class="nav-tab" onclick="switchTab('fertilizer-usage')">Fertilizer Usage</button>
+            <button class="nav-tab" onclick="switchTab('profit-calculation')">Profit Calculation</button>
+            <button class="nav-tab" onclick="switchTab('reports')">Reports</button>
+        </div>
+
+
+
+
+
+
+
+        <div class="content">
+
+            <!-- ==================== FARMERS ==================== -->
+            <div id="farmers" class="tab-content active">
+                <div id="farmers-alert"></div>
+                <div class="form-section">
+                    <div class="form-title">Add/Edit Farmer</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="farmer-first-name">First Name *</label>
+                            <input type="text" id="farmer-first-name" placeholder="Enter first name">
+                        </div>
+                        <div class="form-group">
+                            <label for="farmer-last-name">Last Name *</label>
+                            <input type="text" id="farmer-last-name" placeholder="Enter last name">
+                        </div>
+                        <div class="form-group">
+                            <label for="farmer-email">Email</label>
+                            <input type="email" id="farmer-email" placeholder="Enter email">
+                        </div>
+                        <div class="form-group">
+                            <label for="farmer-phone">Phone</label>
+                            <input type="tel" id="farmer-phone" placeholder="Enter phone number">
+                        </div>
+                        <div class="form-group">
+                            <label for="farmer-address">Address</label>
+                            <input type="text" id="farmer-address" placeholder="Enter address">
+                        </div>
+                        <div class="form-group">
+                            <label for="farmer-city">City</label>
+                            <input type="text" id="farmer-city" placeholder="Enter city">
+                        </div>
+                        <div class="form-group">
+                            <label for="farmer-state">State/Province</label>
+                            <input type="text" id="farmer-state" placeholder="Enter state">
+                        </div>
+                        <div class="form-group">
+                            <label for="farmer-postal">Postal Code</label>
+                            <input type="text" id="farmer-postal" placeholder="Enter postal code">
+                        </div>
+                        <div class="form-group">
+                            <label for="farmer-country">Country</label>
+                            <input type="text" id="farmer-country" placeholder="Enter country">
+                        </div>
+                        <div class="form-group">
+                            <label for="farmer-experience">Experience (years)</label>
+                            <input type="number" id="farmer-experience" placeholder="0" min="0">
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="addOrUpdateFarmer()">Save Farmer</button>
+                        <button class="btn-secondary" onclick="resetFarmerForm()">Clear Form</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="farmer-count">0</div>
+                        <div class="stat-label">Total Farmers</div>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="form-title">Farmers List</div>
+                    <div id="farmers-table-container"></div>
+                </div>
+            </div>
+
+            <!-- ==================== CROPS ==================== -->
+            <div id="crops" class="tab-content">
+                <div id="crops-alert"></div>
+                <div class="form-section">
+                    <div class="form-title">Add/Edit Crop</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="crop-name">Crop Name *</label>
+                            <input type="text" id="crop-name" placeholder="Enter crop name">
+                        </div>
+                        <div class="form-group">
+                            <label for="crop-type">Crop Type</label>
+                            <input type="text" id="crop-type" placeholder="e.g., Cereal, Vegetable">
+                        </div>
+                        <div class="form-group">
+                            <label for="crop-planting-season">Planting Season</label>
+                            <input type="text" id="crop-planting-season" placeholder="e.g., June-July">
+                        </div>
+                        <div class="form-group">
+                            <label for="crop-harvest-season">Harvest Season</label>
+                            <input type="text" id="crop-harvest-season" placeholder="e.g., Nov-Dec">
+                        </div>
+                        <div class="form-group">
+                            <label for="crop-yield">Average Yield</label>
+                            <input type="number" id="crop-yield" placeholder="Enter yield amount" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="crop-yield-unit">Yield Unit</label>
+                            <input type="text" id="crop-yield-unit" placeholder="e.g., kg/hectare">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="crop-description">Description</label>
+                        <textarea id="crop-description" placeholder="Enter crop description" rows="3"></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="addOrUpdateCrop()">Save Crop</button>
+                        <button class="btn-secondary" onclick="resetCropForm()">Clear Form</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="crop-count">0</div>
+                        <div class="stat-label">Total Crops</div>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="form-title">Crops List</div>
+                    <div id="crops-table-container"></div>
+                </div>
+            </div>
+
+            <!-- ==================== LAND ==================== -->
+            <div id="land" class="tab-content">
+                <div id="land-alert"></div>
+                <div class="form-section">
+                    <div class="form-title">Add/Edit Land</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="land-farmer-id">Farmer *</label>
+                            <select id="land-farmer-id">
+                                <option value="">Select a farmer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="land-name">Land Name</label>
+                            <input type="text" id="land-name" placeholder="Enter land name">
+                        </div>
+                        <div class="form-group">
+                            <label for="land-area">Area *</label>
+                            <input type="number" id="land-area" placeholder="Enter area" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="land-area-unit">Area Unit</label>
+                            <select id="land-area-unit">
+                                <option value="hectare">Hectare</option>
+                                <option value="acre">Acre</option>
+                                <option value="sqm">Square Meter</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="land-soil-type">Soil Type</label>
+                            <input type="text" id="land-soil-type" placeholder="e.g., Loamy">
+                        </div>
+                        <div class="form-group">
+                            <label for="land-location">Location</label>
+                            <input type="text" id="land-location" placeholder="Enter location">
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="addOrUpdateLand()">Save Land</button>
+                        <button class="btn-secondary" onclick="resetLandForm()">Clear Form</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="land-count">0</div>
+                        <div class="stat-label">Total Land</div>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="form-title">Land List</div>
+                    <div id="land-table-container"></div>
+                </div>
+            </div>
+
+            <!-- ==================== PLANTING RECORDS ==================== -->
+            <div id="planting-records" class="tab-content">
+                <div id="planting-records-alert"></div>
+                <div class="form-section">
+                    <div class="form-title">Add/Edit Planting Record</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="planting-land-id">Land *</label>
+                            <select id="planting-land-id">
+                                <option value="">Select land</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="planting-crop-id">Crop *</label>
+                            <select id="planting-crop-id">
+                                <option value="">Select crop</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="planting-date">Planting Date *</label>
+                            <input type="date" id="planting-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="planting-expected-date">Expected Harvest Date</label>
+                            <input type="date" id="planting-expected-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="planting-quantity">Quantity Planted</label>
+                            <input type="number" id="planting-quantity" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="planting-unit">Quantity Unit</label>
+                            <input type="text" id="planting-unit" placeholder="kg, tons, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label for="planting-fertilizer">Fertilizer Used</label>
+                            <input type="text" id="planting-fertilizer" placeholder="Urea, Compost">
+                        </div>
+                        <div class="form-group">
+                            <label for="planting-fertilizer-amount">Fertilizer Amount</label>
+                            <input type="number" id="planting-fertilizer-amount" step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="planting-notes">Notes</label>
+                        <textarea id="planting-notes" rows="3" placeholder="Extra notes"></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="addOrUpdatePlantingRecord()">Save Planting Record</button>
+                        <button class="btn-secondary" onclick="resetPlantingRecordForm()">Clear Form</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="planting-record-count">0</div>
+                        <div class="stat-label">Total Planting Records</div>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="form-title">Planting Records List</div>
+                    <div id="planting-records-table-container"></div>
+                </div>
+            </div>
+
+            <!-- ==================== HARVEST ==================== -->
+            <div id="harvest" class="tab-content">
+                <div id="harvest-alert"></div>
+                <div class="form-section">
+                    <div class="form-title">Add/Edit Harvest</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="harvest-planting-id">Planting Record *</label>
+                            <select id="harvest-planting-id">
+                                <option value="">Select a planting record</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="harvest-date">Harvest Date *</label>
+                            <input type="date" id="harvest-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="harvest-quantity">Quantity Harvested</label>
+                            <input type="number" id="harvest-quantity" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="harvest-unit">Quantity Unit</label>
+                            <input type="text" id="harvest-unit" placeholder="kg, tons, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label for="harvest-quality">Quality</label>
+                            <input type="text" id="harvest-quality" placeholder="Premium, Grade A">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="harvest-notes">Notes</label>
+                        <textarea id="harvest-notes" rows="3" placeholder="Harvest observations"></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="addOrUpdateHarvest()">Save Harvest</button>
+                        <button class="btn-secondary" onclick="resetHarvestForm()">Clear Form</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="harvest-count">0</div>
+                        <div class="stat-label">Total Harvest Records</div>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="form-title">Harvest List</div>
+                    <div id="harvest-table-container"></div>
+                </div>
+            </div>
+
+            <!-- ==================== MARKETS ==================== -->
+            <div id="markets" class="tab-content">
+                <div id="markets-alert"></div>
+                <div class="form-section">
+                    <div class="form-title">Add/Edit Market</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="market-name">Market Name *</label>
+                            <input type="text" id="market-name" placeholder="Enter market name">
+                        </div>
+                        <div class="form-group">
+                            <label for="market-location">Location</label>
+                            <input type="text" id="market-location" placeholder="Enter location">
+                        </div>
+                        <div class="form-group">
+                            <label for="market-contact">Contact Person</label>
+                            <input type="text" id="market-contact" placeholder="Enter contact person">
+                        </div>
+                        <div class="form-group">
+                            <label for="market-phone">Phone</label>
+                            <input type="tel" id="market-phone" placeholder="Enter phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="market-email">Email</label>
+                            <input type="email" id="market-email" placeholder="Enter email">
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="addOrUpdateMarket()">Save Market</button>
+                        <button class="btn-secondary" onclick="resetMarketForm()">Clear Form</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="market-count">0</div>
+                        <div class="stat-label">Total Markets</div>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="form-title">Markets List</div>
+                    <div id="markets-table-container"></div>
+                </div>
+            </div>
+
+            <!-- ==================== SALES ==================== -->
+            <div id="sales" class="tab-content">
+                <div id="sales-alert"></div>
+                <div class="form-section">
+                    <div class="form-title">Add/Edit Sale</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="sale-harvest-id">Harvest *</label>
+                            <select id="sale-harvest-id">
+                                <option value="">Select harvest</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sale-market-id">Market</label>
+                            <select id="sale-market-id">
+                                <option value="">Select market</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sale-date">Sale Date *</label>
+                            <input type="date" id="sale-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="sale-quantity">Quantity Sold</label>
+                            <input type="number" id="sale-quantity" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="sale-unit">Quantity Unit</label>
+                            <input type="text" id="sale-unit" placeholder="kg, tons, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label for="sale-price">Price Per Unit</label>
+                            <input type="number" id="sale-price" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="sale-total">Total Sale Amount</label>
+                            <input type="number" id="sale-total" step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="sale-notes">Notes</label>
+                        <textarea id="sale-notes" rows="3" placeholder="Sale notes"></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="addOrUpdateSale()">Save Sale</button>
+                        <button class="btn-secondary" onclick="resetSaleForm()">Clear Form</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="sale-count">0</div>
+                        <div class="stat-label">Total Sales</div>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="form-title">Sales List</div>
+                    <div id="sales-table-container"></div>
+                </div>
+            </div>
+
+            <!-- ==================== WEATHER ==================== -->
+            <div id="weather" class="tab-content">
+                <div id="weather-alert"></div>
+                <div class="form-section">
+                    <div class="form-title">Add/Edit Weather Record</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="weather-land-id">Land *</label>
+                            <select id="weather-land-id">
+                                <option value="">Select land</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="weather-date">Weather Date *</label>
+                            <input type="date" id="weather-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="weather-min-temp">Min Temperature</label>
+                            <input type="number" id="weather-min-temp" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="weather-max-temp">Max Temperature</label>
+                            <input type="number" id="weather-max-temp" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="weather-rainfall">Rainfall</label>
+                            <input type="number" id="weather-rainfall" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="weather-humidity">Humidity</label>
+                            <input type="number" id="weather-humidity" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="weather-wind-speed">Wind Speed</label>
+                            <input type="number" id="weather-wind-speed" step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="weather-notes">Notes</label>
+                        <textarea id="weather-notes" rows="3" placeholder="Weather notes"></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="addOrUpdateWeather()">Save Weather Record</button>
+                        <button class="btn-secondary" onclick="resetWeatherForm()">Clear Form</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="weather-count">0</div>
+                        <div class="stat-label">Total Weather Records</div>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="form-title">Weather List</div>
+                    <div id="weather-table-container"></div>
+                </div>
+            </div>
+
+            <!-- ==================== EQUIPMENT ==================== -->
+            <div id="equipment" class="tab-content">
+                <div id="equipment-alert"></div>
+                <div class="form-section">
+                    <div class="form-title">Add/Edit Equipment</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="equipment-name">Equipment Name *</label>
+                            <input type="text" id="equipment-name" placeholder="Enter equipment name">
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment-type">Equipment Type</label>
+                            <input type="text" id="equipment-type" placeholder="e.g., Tractor, Planter">
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment-owner">Owner Name</label>
+                            <input type="text" id="equipment-owner" placeholder="Enter owner name">
+                        </div>
+                        <div class="form-group">
+                            <label for="equipment-price">Rental Price Per Day</label>
+                            <input type="number" id="equipment-price" placeholder="Enter daily price" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="equipment-description">Description</label>
+                        <textarea id="equipment-description" placeholder="Enter equipment description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="equipment-availability" checked>
+                            Available for rental
+                        </label>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="addOrUpdateEquipment()">Save Equipment</button>
+                        <button class="btn-secondary" onclick="resetEquipmentForm()">Clear Form</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="equipment-count">0</div>
+                        <div class="stat-label">Total Equipment</div>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="form-title">Equipment List</div>
+                    <div id="equipment-table-container"></div>
+                </div>
+            </div>
+
+            <!-- ==================== EQUIPMENT RENTAL ==================== -->
+            <div id="equipment-rental" class="tab-content">
+                <div id="equipment-rental-alert"></div>
+                <div class="form-section">
+                    <div class="form-title">Add/Edit Equipment Rental</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="rental-farmer-id">Farmer *</label>
+                            <select id="rental-farmer-id">
+                                <option value="">Select farmer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="rental-equipment-id">Equipment *</label>
+                            <select id="rental-equipment-id">
+                                <option value="">Select equipment</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="rental-date">Rental Date *</label>
+                            <input type="date" id="rental-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="rental-return-date">Return Date *</label>
+                            <input type="date" id="rental-return-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="rental-days">Rental Days</label>
+                            <input type="number" id="rental-days" min="1" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="rental-cost">Rental Cost</label>
+                            <input type="number" id="rental-cost" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="rental-status">Status</label>
+                            <select id="rental-status">
+                                <option value="Pending">Pending</option>
+                                <option value="Active">Active</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="rental-notes">Notes</label>
+                        <textarea id="rental-notes" rows="3" placeholder="Rental notes"></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" id="equipment-rental-submit-button" onclick="addOrUpdateEquipmentRental()">Save Equipment Rental</button>
+                        <button class="btn-secondary" onclick="resetEquipmentRentalForm()">Clear Form</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="equipment-rental-count">0</div>
+                        <div class="stat-label">Total Equipment Rentals</div>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="form-title">Equipment Rental Records</div>
+                    <div id="equipment-rental-table-container"></div>
+                </div>
+            </div>
+
+            <!-- ==================== FERTILIZERS ==================== -->
+            <div id="fertilizers" class="tab-content">
+                <div id="fertilizers-alert"></div>
+                <div class="form-section">
+                    <div class="form-title">Add/Edit Fertilizer</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="fertilizer-name">Fertilizer Name *</label>
+                            <input type="text" id="fertilizer-name" placeholder="Enter fertilizer name">
+                        </div>
+                        <div class="form-group">
+                            <label for="fertilizer-type">Fertilizer Type</label>
+                            <input type="text" id="fertilizer-type" placeholder="e.g., Organic, Chemical">
+                        </div>
+                        <div class="form-group">
+                            <label for="fertilizer-unit">Unit</label>
+                            <input type="text" id="fertilizer-unit" placeholder="e.g., kg, liter">
+                        </div>
+                        <div class="form-group">
+                            <label for="fertilizer-price">Price Per Unit</label>
+                            <input type="number" id="fertilizer-price" step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="fertilizer-description">Description</label>
+                        <textarea id="fertilizer-description" rows="3" placeholder="Fertilizer description"></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" id="fertilizer-submit-button" onclick="addOrUpdateFertilizer()">Save Fertilizer</button>
+                        <button class="btn-secondary" onclick="resetFertilizerForm()">Clear Form</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="fertilizer-count">0</div>
+                        <div class="stat-label">Total Fertilizers</div>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="form-title">Fertilizers List</div>
+                    <div id="fertilizer-table-container"></div>
+                </div>
+            </div>
+
+            <!-- ==================== FERTILIZER USAGE ==================== -->
+            <div id="fertilizer-usage" class="tab-content">
+                <div id="fertilizer-usage-alert"></div>
+                <div class="form-section">
+                    <div class="form-title">Add/Edit Fertilizer Usage</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="fertilizer-usage-planting-id">Planting Record *</label>
+                            <select id="fertilizer-usage-planting-id">
+                                <option value="">Select planting record</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fertilizer-usage-fertilizer-id">Fertilizer *</label>
+                            <select id="fertilizer-usage-fertilizer-id">
+                                <option value="">Select fertilizer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fertilizer-usage-date">Usage Date *</label>
+                            <input type="date" id="fertilizer-usage-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="fertilizer-usage-quantity">Quantity Used</label>
+                            <input type="number" id="fertilizer-usage-quantity" step="0.01" min="0" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="fertilizer-usage-unit">Unit</label>
+                            <input type="text" id="fertilizer-usage-unit" placeholder="e.g., kg">
+                        </div>
+                        <div class="form-group">
+                            <label for="fertilizer-usage-cost">Cost</label>
+                            <input type="number" id="fertilizer-usage-cost" step="0.01" min="0" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="fertilizer-usage-notes">Notes</label>
+                        <textarea id="fertilizer-usage-notes" rows="3" placeholder="Usage notes"></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" id="fertilizer-usage-submit-button" onclick="addOrUpdateFertilizerUsage()">Save Fertilizer Usage</button>
+                        <button class="btn-secondary" onclick="resetFertilizerUsageForm()">Clear Form</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="fertilizer-usage-count">0</div>
+                        <div class="stat-label">Total Fertilizer Usage Records</div>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="form-title">Fertilizer Usage List</div>
+                    <div id="fertilizer-usage-table-container"></div>
+                </div>
+            </div>
+
+            <!-- ==================== PROFIT CALCULATION ==================== -->
+            <div id="profit-calculation" class="tab-content">
+                <div id="profit-alert"></div>
+                <div class="form-section">
+                    <div class="form-title">Add/Edit Profit Record</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="profit-farmer-id">Farmer *</label>
+                            <select id="profit-farmer-id">
+                                <option value="">Select farmer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="profit-date">Calculation Date *</label>
+                            <input type="date" id="profit-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="profit-revenue">Total Revenue *</label>
+                            <input type="number" id="profit-revenue" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="profit-fertilizer-cost">Fertilizer Cost</label>
+                            <input type="number" id="profit-fertilizer-cost" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="profit-rental-cost">Equipment Rental Cost</label>
+                            <input type="number" id="profit-rental-cost" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="profit-other-cost">Other Cost</label>
+                            <input type="number" id="profit-other-cost" step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="profit-notes">Notes</label>
+                        <textarea id="profit-notes" rows="3" placeholder="Notes about this calculation"></textarea>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" id="profit-submit-button" onclick="addOrUpdateProfitCalculation()">Save Profit Record</button>
+                        <button class="btn-secondary" onclick="resetProfitCalculationForm()">Clear Form</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="profit-count">0</div>
+                        <div class="stat-label">Total Profit Records</div>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <div class="form-title">Profit Calculation Records</div>
+                    <div id="profit-table-container"></div>
+                </div>
+            </div>
+
+            <!-- ==================== REPORTS ==================== -->
+            <div id="reports" class="tab-content">
+                <div class="form-section">
+                    <div class="form-title">Generate Report</div>
+                    <div class="form-grid">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="report-select">Choose a Report</label>
+                            <select id="report-select" onchange="loadReport()">
+                                <option value="">-- Select a Report --</option>
+                                <option value="farmer-profit-summary">Farmer Profit Summary</option>
+                                <option value="equipment-rental-details">Equipment Rental Details</option>
+                                <option value="market-sales-summary">Market Sales Summary</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="loadReport()">Generate Report</button>
+                        <button class="btn-secondary" onclick="resetReportView()">Clear</button>
+                    </div>
+                </div>
+
+                <div class="table-section">
+                    <div class="form-title" id="report-result-title"></div>
+                    <div id="report-table-container">
+                        <p class="no-data">Select a report from the dropdown above.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/farmers.js"></script>
+    <script src="js/crops.js"></script>
+    <script src="js/land.js"></script>
+    <script src="js/markets.js"></script>
+    <script src="js/plantingRecords.js"></script>
+    <script src="js/harvest.js"></script>
+    <script src="js/sales.js"></script>
+    <script src="js/weather.js"></script>
+    <script src="js/equipment.js"></script>
+    <script src="js/equipmentRental.js"></script>
+    <script src="js/fertilizers.js"></script>
+    <script src="js/fertilizerUsage.js"></script>
+    <script src="js/profitCalculation.js"></script>
+    <script src="js/reports.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
