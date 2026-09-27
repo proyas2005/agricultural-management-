@@ -17,6 +17,7 @@ const profitCalculationRoutes = require('./backend/routes/profitCalculation');
 const fertilizersRoutes = require('./backend/routes/fertilizers');
 const fertilizerUsageRoutes = require('./backend/routes/fertilizerUsage');
 const reportsRoutes = require('./backend/routes/reports');
+const aiRoutes = require('./backend/routes/ai');
 
 
 
@@ -24,18 +25,7 @@ const reportsRoutes = require('./backend/routes/reports');
 
 const app = express();
 
-// Error log file (used for debugging)
-const fs = require('fs');
-const originalConsoleError = console.error;
-console.error = function(...args) {
-    originalConsoleError.apply(console, args);
-    try {
-        const line = args.map(a =>
-            typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)
-        ).join(' ');
-        fs.appendFileSync('server-errors.txt', new Date().toISOString() + ' | ' + line + '\n\n');
-    } catch (e) {}
-};
+
 
 
 app.use(cors());
@@ -57,6 +47,7 @@ app.use(profitCalculationRoutes);
 app.use(fertilizersRoutes);
 app.use(fertilizerUsageRoutes);
 app.use(reportsRoutes);
+app.use(aiRoutes);
 
 
 

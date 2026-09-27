@@ -34,3 +34,8 @@ build/
 # Temporary files
 tmp/
 temp/
+
+
+# Environment backups (never push)
+.env.backup-before-ai
+.env.backup*

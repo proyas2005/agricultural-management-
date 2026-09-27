@@ -4,6 +4,13 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Agriculture Management System loaded');
 
+
+    
+    // Initialize AI Chat (adds welcome message)
+    initAiChat();
+
+
+
     // Load initial data for all entities
     loadFarmers();
     loadEquipmentRentals();
@@ -110,3 +117,10 @@ window.deleteProfitCalculationConfirm = deleteProfitCalculationConfirm;
 // Reports
 window.loadReport = loadReport;
 window.resetReportView = resetReportView;
+
+
+// AI Chat Board
+window.openAiChat = openAiChat;
+window.closeAiChat = closeAiChat;
+window.sendChatMessage = sendChatMessage;
+window.handleChatKeydown = handleChatKeydown;
